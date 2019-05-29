@@ -1,5 +1,6 @@
 const profileInfo=[
     {
+        "id":1,
         "variableName":"TestFacilityName",
         "type":"text",
         "category":"Settings",
@@ -11,6 +12,7 @@ const profileInfo=[
         "placeholder":"<Enter Customer Facility Name>"
     },//1
     {   
+        "id":2,
         "variableName":"techFlow.SupportedTargetPlatform",
         "type":"select",
         "category":"Settings",
@@ -22,6 +24,7 @@ const profileInfo=[
         "selectedValue":""
     },//2
     {
+        "id":3,
         "variableName":"techFlow.SupportedTargetPlatform.IfParentNotFound",
         "type":"select",
         "category":"Settings",
@@ -33,6 +36,7 @@ const profileInfo=[
         "selectedValue":""
     },//3
     {
+        "id":4,
         "variableName":"techFlow.ShowTargetPlatformDropdown",
         "type":"select",
         "category":"Settings",
@@ -44,6 +48,7 @@ const profileInfo=[
         "selectedValue":""
     },//4
     {
+        "id":5,
         "variableName":"techFlow.ShowTargetPlatformDropdown.IfParentNotFound",
         "type":"select",
         "category":"Settings",
@@ -55,6 +60,7 @@ const profileInfo=[
         "selectedValue":""
     },//5
     {
+        "id":6,
         "variableName":"techFlow.SupportedTargetFramework",
         "type":"select",
         "category":"Settings",
@@ -66,6 +72,7 @@ const profileInfo=[
         "selectedValue":""
     },//6
     {
+        "id":7,
         "variableName":"techFlow.SupportedTargetFramework.IfParentNotFound",
         "type":"select",
         "category":"Settings",
@@ -77,6 +84,7 @@ const profileInfo=[
         "selectedValue":""
     },//7
     {
+        "id":8,
         "variableName":"ProdSys.DefaultPlatform",
         "type":"select",
         "category":"Settings",
@@ -88,6 +96,7 @@ const profileInfo=[
         "selectedValue":""
     },//8    
     {
+        "id":9,
         "variableName":"ProdSys.DefaultPlatform",
         "type":"select",
         "category":"Settings",
@@ -99,6 +108,7 @@ const profileInfo=[
         "selectedValue":""
     },//9
     {
+        "id":10,
         "variableName":"ProdSys.DefaultPlatform.IfParentNotFound",
         "type":"select",
         "category":"Settings",
@@ -110,6 +120,7 @@ const profileInfo=[
         "selectedValue":""
     },//10
     {
+        "id":11,
         "variableName":"ProdSys.DefaultFramework",
         "type":"select",
         "category":"Settings",
@@ -121,6 +132,7 @@ const profileInfo=[
         "selectedValue":""
     },//11
     {
+        "id":12,
         "variableName":"ProdSys.DefaultFramework.IfParentNotFound",
         "type":"select",
         "category":"Settings",
@@ -132,6 +144,7 @@ const profileInfo=[
         "selectedValue":""
     },//12
     {
+        "id":13,
         "variableName":"Launcher.Wizard.ShowOnlyDefaultProjectTemplate",
         "type":"select",
         "category":"Settings",
@@ -143,6 +156,7 @@ const profileInfo=[
         "selectedValue":""
     },//13
     {
+        "id":14,
         "variableName":"Launcher.Wizard.ForceTargetPlatform",
         "type":"select",
         "category":"Settings",
@@ -155,6 +169,7 @@ const profileInfo=[
         "selectedValue":""
     },//14
     {
+        "id":15,
         "variableName":"Launcher.Wizard.DefaultTargetPlatform",
         "type":"select",
         "category":"Settings",
@@ -166,6 +181,7 @@ const profileInfo=[
         "selectedValue":""
     },//15
     {
+        "id":16,
         "variableName":"Launcher.Wizard.SupportedTargetPlatform",
         "type":"select",
         "category":"Settings",
@@ -177,6 +193,7 @@ const profileInfo=[
         "selectedValue":""
     },//16
     {
+        "id":17,
         "variableName":"VisualStudio.ProjectTemplatesDir",
         "type":"text",
         "category":"Library",
@@ -184,10 +201,10 @@ const profileInfo=[
         "endAvailableVersion":"9999.9999.9999.9999",
         "stringToDisplay" : "",
         "checked":false,
-        "defaultValue":"techFlow3/bin/lib/vslib",
-        "value":""
+        "value":"techFlow3/bin/lib/vslib"
     },//17
     {
+        "id":18,
         "variableName":"VisualStudio.DefaultProgrammingLanguage",
         "type":"select",
         "category":"Settings",
@@ -199,6 +216,7 @@ const profileInfo=[
         "selectedValue":""
     },//18
     {
+        "id":19,
         "variableName":"VisualStudio.DefaultProjectTemplate.Cpp",
         "type":"text",
         "category":"Settings",
@@ -206,10 +224,10 @@ const profileInfo=[
         "endAvailableVersion":"9999.9999.9999.9999",
         "stringToDisplay" : "",
         "checked":false,
-        "defaultValue":"Default",
-        "value":""
+        "value":"Default"
     },//19
     {
+        "id":20,
         "variableName":"VisualStudio.DefaultProjectTemplate.CppNF4",
         "type":"text",
         "category":"Settings",
@@ -217,10 +235,10 @@ const profileInfo=[
         "endAvailableVersion":"9999.9999.9999.9999",
         "stringToDisplay" : "",
         "checked":false,
-        "value":"",
-        "defaultValue":"Default"
+        "value":"Default"
     },//20
     {
+        "id":21,
         "variableName":"VisualStudio.PreferredIDE.Cpp",
         "type":"select",
         "category":"Settings",
@@ -232,6 +250,7 @@ const profileInfo=[
         "selectedValue":""
     },//21
     {
+        "id":22,
         "variableName":"VisualStudio.PreferredIDE.CppNF4",
         "type":"select",
         "category":"Settings",
@@ -243,6 +262,7 @@ const profileInfo=[
         "selectedValue":""
     },//22
     {
+        "id":23,
         "variableName":"VisualStudio.GeneratePlatform.Cpp",
         "type":"select",
         "category":"Settings",
@@ -254,6 +274,7 @@ const profileInfo=[
         "selectedValue":""
     },//23
     {
+        "id":24,
         "variableName":"VisualStudio.GeneratePlateform.CppNF4",
         "type":"select",
         "category":"Settings",
@@ -265,6 +286,7 @@ const profileInfo=[
         "selectedValue":""
     },//24
     {
+        "id":25,
         "variableName":"techFlow.Settings",
         "type":"select",
         "category":"Settings",
@@ -276,6 +298,7 @@ const profileInfo=[
         "selectedValue":""
     },//25
     {
+        "id":26,
         "variableName":"ProdSys.EDReplacement",
         "type":"select",
         "category":"Settings",
@@ -287,6 +310,7 @@ const profileInfo=[
         "selectedValue":""
     },//26
     {
+        "id":27,
         "variableName":"techFlow.Test.DefaultTestItemPathSelector",
         "type":"select",
         "category":"Settings",
@@ -298,6 +322,7 @@ const profileInfo=[
         "selectedValue":""
     },//27
     {
+        "id":28,
         "variableName":"techFlow.Test.DefaultTestItemPathSelector.IfParentNotFound",
         "type":"select",
         "category":"Settings",
@@ -309,6 +334,7 @@ const profileInfo=[
         "selectedValue":""
     },//28
     {
+        "id":29,
         "variableName":"techFlow.Test.LimitInheritResultPrefix",
         "type":"select",
         "category":"Settings",
@@ -320,6 +346,7 @@ const profileInfo=[
         "selectedValue":""
     },//29
     {
+        "id":30,
         "variableName":"techFlow.Test.LimitInheritResultPrefix.IfParentNotFound",
         "type":"select",
         "category":"Settings",
@@ -331,6 +358,7 @@ const profileInfo=[
         "selectedValue":""
     },//30
     {
+        "id":31,
         "variableName":"techFlow.Test.ShowTestNumber",
         "type":"select",
         "category":"Settings",
@@ -342,6 +370,7 @@ const profileInfo=[
         "selectedValue":""
     },//31
     {
+        "id":32,
         "variableName":"techFlow.Test.ShowTestNumber.IfParentNotFound",
         "type":"select",
         "category":"Settings",
@@ -353,6 +382,7 @@ const profileInfo=[
         "selectedValue":""
     },//32
     {
+        "id":33,
         "variableName":"techFlow.Test.TestNumberMode",
         "type":"select",
         "category":"Settings",
@@ -364,6 +394,7 @@ const profileInfo=[
         "selectedValue":""
     },//33
     {
+        "id":34,
         "variableName":"techFlow.Test.TestNumberMode.IfParentNotFound",
         "type":"select",
         "category":"Settings",
@@ -375,6 +406,7 @@ const profileInfo=[
         "selectedValue":""
     },//34
     {
+        "id":35,
         "variableName":"techFlow.Test.GradingTestShareTestNumber",
         "type":"select",
         "category":"Settings",
@@ -386,6 +418,7 @@ const profileInfo=[
         "selectedValue":""
     },//35
     {
+        "id":36,
         "variableName":"techFlow.Test.GradingTestShareTestNumber.IfParentNotFound",
         "type":"select",
         "category":"Settings",
@@ -397,6 +430,7 @@ const profileInfo=[
         "selectedValue":""
     },//36
     {
+        "id":37,
         "variableName":"techFlow.CreateDebugGlobalVariable",
         "type":"select",
         "category":"Settings",
@@ -408,6 +442,7 @@ const profileInfo=[
         "selectedValue":""
     },//37
     {
+        "id":38,
         "variableName":"techFlow.CreateDebugGlobalVariable.IfParentNotFound",
         "type":"select",
         "category":"Settings",
@@ -419,6 +454,7 @@ const profileInfo=[
         "selectedValue":""
     },//38
     {
+        "id":39,
         "variableName":"techFlow.DefaultDebugGlobalVariableValue",
         "type":"select",
         "category":"Settings",
@@ -430,6 +466,7 @@ const profileInfo=[
         "selectedValue":""
     },//39
     {
+        "id":40,
         "variableName":"techFlow.DefaultDebugGlobalVeriableValue.IfParentNotFound",
         "type":"select",
         "category":"Settings",
@@ -441,6 +478,7 @@ const profileInfo=[
         "selectedValue":""
     },//40
     {
+        "id":41,
         "variableName":"techFlow.ShowDebugDropdown",
         "type":"select",
         "category":"Settings",
@@ -452,6 +490,7 @@ const profileInfo=[
         "selectedValue":""
     },//41
     {
+        "id":42,
         "variableName":"techFlow.ShowDebugDropdown.IfParentNotFound",
         "type":"select",
         "category":"Settings",
@@ -463,6 +502,7 @@ const profileInfo=[
         "selectedValue":""
     },//42
     {
+        "id":43,
         "variableName":"techFlow.ShowFlowEditorUponRecipeLoaded",
         "type":"select",
         "category":"Settings",
@@ -474,6 +514,7 @@ const profileInfo=[
         "selectedValue":""
     },//43
     {
+        "id":44,
         "variableName":"techFlow.ShowFlowEditorUponRecipeLoaded.IfParentNotFound",
         "type":"select",
         "category":"Settings",
@@ -485,6 +526,7 @@ const profileInfo=[
         "selectedValue":""
     },//44
     {
+        "id":45,
         "variableName":"Launcher.ShowRTDP",
         "type":"select",
         "category":"Settings",
@@ -496,6 +538,7 @@ const profileInfo=[
         "selectedValue":""
     },//45
     {
+        "id":46,
         "variableName":"Launcher.ShowProjectHistory",
         "type":"select",
         "category":"Settings",
@@ -507,6 +550,7 @@ const profileInfo=[
         "selectedValue":""
     },//46
     {
+        "id":47,
         "variableName":"SiteGroup.IncludeExcludeDUTBasedOnCommitResult",
         "type":"select",
         "category":"Settings",
@@ -518,6 +562,7 @@ const profileInfo=[
         "selectedValue":""
     },//47
     {
+        "id":48,
         "variableName":"techFlow.SupportedOperationMode",
         "type":"select",
         "category":"Settings",

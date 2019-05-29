@@ -4,6 +4,7 @@ const CheckBox = props =>{
     return(
         <div>
             <input
+                key={props.id}
                 id={props.id}
                 onChange={props.handleCheckbox}
                 checked={props.checked}
