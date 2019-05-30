@@ -152,7 +152,6 @@ class FormContainer extends React.Component{
     handleInput = (event) =>{
         const {id,value,type,checked} = event.target
         let profileData = this.state.profileInfo
-        console.log(profileData[id])
         if (type === "select-one")  {profileData[id].selectedValue = value}
         else if(type === "checkbox")    {profileData[id].checked=checked}
         else if(type === "text")    {profileData[id].value=value}
@@ -268,6 +267,7 @@ class FormContainer extends React.Component{
                                  <br/>
                                  <div className="form-group">
                                     <CheckBox
+                                        id={i}
                                         handleCheckbox={this.handleInput}
                                         checked={profile.checked}
                                         title={profile.variableName}
@@ -292,6 +292,7 @@ class FormContainer extends React.Component{
                                 <label>{i+1} </label>
                                 <br/>
                                 <CheckBox
+                                        id={i}
                                         handleCheckbox={this.handleInput}
                                         checked={profile.checked}
                                         title={profile.variableName}
