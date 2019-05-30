@@ -4,7 +4,6 @@ const Select = props=>{
     return(
         <div className="form-group">
             <select
-                key={props.id}
                 id={props.id}
                 name={props.name}
                 value={props.value}

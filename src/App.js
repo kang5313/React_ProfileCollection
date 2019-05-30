@@ -11,7 +11,7 @@ class App extends Component {
   render() {
     return (
       <div className="col-sm-12">
-        <h1 style={styles}>Aemulus</h1>
+        <h1 style={styles}>TechFlow Profile</h1>
         <FormContainer />
       </div>
     );

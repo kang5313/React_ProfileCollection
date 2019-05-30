@@ -3,6 +3,7 @@ const Input = props=>{
     return(
         <div className="form-group">
             <input 
+                id={props.id}
                 type={props.type}
                 className="form-control"
                 name={props.name}

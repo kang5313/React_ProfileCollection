@@ -152,6 +152,7 @@ class FormContainer extends React.Component{
     handleInput = (event) =>{
         const {id,value,type,checked} = event.target
         let profileData = this.state.profileInfo
+        console.log(profileData[id])
         if (type === "select-one")  {profileData[id].selectedValue = value}
         else if(type === "checkbox")    {profileData[id].checked=checked}
         else if(type === "text")    {profileData[id].value=value}
@@ -262,8 +263,7 @@ class FormContainer extends React.Component{
                 {this.state.profileInfo.map((profile,i)=>{
                     if(profile.type==="select"){
                         return(
-                            <div
-                            key={this.state.profileInfo[i].id}>                               
+                            <div key={this.state.profileInfo[i].id}>                               
                                  <label>{i+1}</label>
                                  <br/>
                                  <div className="form-group">
@@ -274,6 +274,7 @@ class FormContainer extends React.Component{
                                         reminder={profile.stringToDisplay}
                                     />
                                     <Select
+                                        id={i}
                                         name={"selectedValue"}
                                         checked={profile.checked}
                                         options={profile.supportedValue}
@@ -286,10 +287,8 @@ class FormContainer extends React.Component{
                             </div>
                         )
                     }
-                    if(profile.type==="text"){
                         return(
-                            <div 
-                            key={this.state.profileInfo[i].id}>
+                            <div key={this.state.profileInfo[i].id}>
                                 <label>{i+1} </label>
                                 <br/>
                                 <CheckBox
@@ -299,7 +298,7 @@ class FormContainer extends React.Component{
                                         reminder={profile.stringToDisplay}
                                 />
                                 <Input
-                                    key={this.state.profileInfo[i].id}
+                                    id={i}
                                     type={"text"}
                                     name={"value"}
                                     value={profile.value}
@@ -310,7 +309,7 @@ class FormContainer extends React.Component{
                                 />
                             </div>
                         )
-                    }
+                    
                 }
                 )}
                 </div>

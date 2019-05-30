@@ -1,6 +1,6 @@
 const profileInfo=[
     {
-        "id":1,
+        "id":0,
         "variableName":"TestFacilityName",
         "type":"text",
         "category":"Settings",
