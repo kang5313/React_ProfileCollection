@@ -5,6 +5,15 @@ import Input from '../components/Input'
 import CheckBox from "../components/CheckBox"
 import Button from "../components/Button"
 
+function changeAllCheckedBoolean (loadedProfile){
+    let changedProfile = [] 
+    loadedProfile.forEach(profile=>{
+        profile.checked = false
+        changedProfile.push(profile)
+    })
+    return changedProfile
+}
+
 /*This function handles the comparison of versions to determine whether the profile should be supported in this version or not
  v1 as selected version , v2 as start supporting version , v3 as end supporting version*/
  function compareVersion(v1, v2, v3) {
@@ -29,21 +38,23 @@ import Button from "../components/Button"
 }
 
 //Use the profile variable name to load the corresponding profile into object. Return the object and insert into state
-function loadProfileVariable(data,value){
+function loadProfileVariable(data,value,fileImported){
     let profileOptions = []
     let i = 0
-    profileInfoCollection.forEach(profile=>{
-        if(profile.variableName===data[i]){
-            profile.checked =true
-            i++
+    changeAllCheckedBoolean(profileInfoCollection).forEach(profile=>{
+        if(compareVersion(value,profile.startAvailableVersion,profile.endAvailableVersion)>=0){    //the profile is available for this version
+            if(profile.variableName === data[i])
+            {
+                profile.checked = true
+                i++
+            }
+
             if(compareVersion(value,profile.startAvailableVersion,profile.endAvailableVersion)===2)  // the profile is only available from the mentioned child version of this version 
-            {
-                profile.stringToDisplay = "support from "+profile.startAvailableVersion+" onwards."
-            }
+            {profile.stringToDisplay = "support from "+profile.startAvailableVersion+" onwards."}
+
             else
-            {
-               profile.stringToDisplay = ""
-            }
+            {profile.stringToDisplay = ""}
+
             profileOptions.push(profile)
         }
     })
@@ -83,8 +94,7 @@ async function readXML(event){
                 }
                 resolve(importedData)
             }
-        reader.readAsText(file[0])
-        reader.onerror = reject
+        if(file.length!==0) {reader.readAsText(file[0]); reader.onerror = reject}
     })
 }
 
@@ -112,7 +122,9 @@ class FormContainer extends React.Component{
             selectedVersion:"",
             versionOptions:["3.6.0","3.6.1","3.7.0","3.10.0","3.10.1","3.11.0","3.11.1","3.11.2"],
             profileName:"",
-            disabled:false
+            disabled:false,
+            fileImported:false,
+            selectedAll:true
         }
     }
 
@@ -124,21 +136,40 @@ class FormContainer extends React.Component{
         let name = event.target.name
         let profileOptions = []
         
-        profileInfoCollection.forEach(profile=>{
-                if(compareVersion(value,profile.startAvailableVersion,profile.endAvailableVersion)>=0){    //the profile is available for this version
-                    profile.checked =true
-                    if(compareVersion(value,profile.startAvailableVersion,profile.endAvailableVersion)===2)  // the profile is only available from the mentioned child version of this version 
-                    {
-                        profile.stringToDisplay = "support from "+profile.startAvailableVersion+" onwards."
+        profileInfoCollection
+        .filter(profile=>compareVersion(value,profile.startAvailableVersion,profile.endAvailableVersion)>=0)
+        .forEach(profile=>{  //the profile is available for this version
+            if(this.state.fileImported){
+                let exist = false
+                this.state.profileInfo.forEach(currentStateProfile=>{
+                    if(currentStateProfile.variableName === profile.variableName){
+                        exist = true
                     }
-                    else
-                    {
-                        profile.stringToDisplay = ""
-                    }
+                })
+                if(!exist){profile.checked =true}
+                if(compareVersion(value,profile.startAvailableVersion,profile.endAvailableVersion)===2)  // the profile is only available from the mentioned child version of this version 
+                {
+                    profile.stringToDisplay = "support from "+profile.startAvailableVersion+" onwards."
+                }
+                else
+                {
+                    profile.stringToDisplay = ""
+                }
+                profileOptions.push(profile)
+            }
+            else{
+                profile.checked =true
+                if(compareVersion(value,profile.startAvailableVersion,profile.endAvailableVersion)===2)  // the profile is only available from the mentioned child version of this version 
+                {
+                    profile.stringToDisplay = "support from "+profile.startAvailableVersion+" onwards."
+                }
+                else
+                {
+                    profile.stringToDisplay = ""
+                }
                     profileOptions.push(profile)
                 }
-            }
-        )
+        })
 
         this.setState(
             prevState=>({
@@ -152,9 +183,9 @@ class FormContainer extends React.Component{
     handleInput = (event) =>{
         const {id,value,type,checked} = event.target
         let profileData = this.state.profileInfo
-        if (type === "select-one")  {profileData[id].selectedValue = value}
-        else if(type === "checkbox")    {profileData[id].checked=checked}
-        else if(type === "text")    {profileData[id].value=value}
+        if (type === "select-one")  {profileData[id].selectedValue = value; profileData[id].isEdited=true}
+        else if(type === "checkbox")    {profileData[id].checked=checked;}
+        else if(type === "text")    {profileData[id].value=value; profileData[id].isEdited=true}
 
         this.setState(
             prevState=>({
@@ -185,11 +216,12 @@ class FormContainer extends React.Component{
         .then(filename=>{
             window.open(url+"/xml/"+filename)
         })
-        .catch(error=>console.error('Error : ',error))
+        document.getElementById("fileToUpload").value=""
         event.preventDefault();
         this.setState((prevState) => ({ 
             profileInfo: [],
-            selectedVersion:""
+            selectedVersion:"",
+            profileName:""
         }))
     }
 
@@ -199,44 +231,88 @@ class FormContainer extends React.Component{
         let i = 0
         let profileOptions = []
         let profileVariableName = []
-        readXML(event)
-        .then(importedData=>{
-            importedData["value"].forEach(profile=>{
-                profileVariableName.push(profile["name"])
-            })
-            profileOptions=loadProfileVariable(profileVariableName,importedData["selectedTechFlowVersion"])//updateVersion(importedData["selectedTechFlowVersion"])
-            profileOptions.forEach(profile=>{
-                if(profile.hasOwnProperty("selectedValue"))
-                {
-                    profile.selectedValue = importedData["value"][i]["variableValue"]
-                }
-                else
-                {
-                    profile.value = importedData["value"][i]["variableValue"]
-                }
-                i++
-            })
-            this.setState((prevState)=>({
-                selectedVersion:importedData["selectedTechFlowVersion"],
-                profileName:importedData["profileName"],
-                profileInfo:profileOptions
-            }))})
+        
+        let fileName = event.target.value
+        var allowed_extensions = new Array("xml");
+        var file_extension = fileName.split('.').pop().toLowerCase(); // split function will split the filename by dot(.), and pop function will pop the last element from the array which will give you the extension as well. If there will be no extension then it will return the filename.
+
+            if(allowed_extensions[i]===file_extension)
+            {readXML(event)
+                .then(importedData=>{
+                    importedData["value"].forEach(profile=>{
+                        profileVariableName.push(profile["name"])
+                    })
+                    profileOptions=loadProfileVariable(profileVariableName,importedData["selectedTechFlowVersion"],this.state.fileImported)
+                    profileOptions.filter(profile=>profile.checked === true).forEach(profile=>{
+                        if(profile.hasOwnProperty("selectedValue"))
+                        {
+                            profile.selectedValue = importedData["value"][i]["variableValue"]
+                        }
+                        else
+                        {
+                            profile.value = importedData["value"][i]["variableValue"]
+                        }
+                        profile.isEdited = false
+                        i++
+                    })
+                    this.setState((prevState)=>({
+                        selectedVersion:importedData["selectedTechFlowVersion"],
+                        profileName:importedData["profileName"],
+                        profileInfo:profileOptions,
+                        fileImported:true
+                    }))})
+            }
+            else{
+                window.alert("This file type is not supported")
+                document.getElementById("fileToUpload").value=""
+                this.setState((prevState)=>({
+                    selectedVersion:"",
+                    profileName:"",
+                    profileInfo:[],
+                    fileImported:false
+                }))
+            }
+        
+    }
+
+    displayHTML = (event) =>{
+        return(
+            <p>HellWorld</p>
+        )
     }
 
     handleProfileName = (event) =>{
         const {value,name} = event.target
-        this.setState((prevState)=>({
+        this.setState(prevState=>({
             [name]:value
+        }))
+    }
+
+    selectAll = (event) =>{
+        let check = event.target.checked
+        let profileData = this.state.profileInfo
+        profileData.forEach(profile=>{
+            profile.checked = check
+        })
+
+        this.setState(prevState=>({
+            profileInfo:profileData,
+            selectedAll:check
         }))
     }
 
     render(){
         //Rendering the component based on the component's input type.
+        const selectAllCBStyle = this.state.selectedVersion===""?{display:'none'}:{}
         return(    
             <form className="container-fluid" onSubmit={this.handleSubmit}>
                 <div className="form-group">
                     <label>Import XML : </label>
-                    <input type="file" className ="form-control mb-5" name="file-to-upload" id="fileToUpload" onInput={this.importXMLFile}></input>
+                    <input type="file" className ="form-control mb-5" name="file-to-upload" id="fileToUpload" onInput={this.importXMLFile} onChange={this.validate_fileUpload}></input>
+                </div>
+                <div className="form-group">
+                    <label>Import TSV : </label>
+                    <input type="file" className ="form-control mb-5" name="file-to-upload" id="fileToUpload" onInput={this.importXMLFile} onChange={this.validate_fileUpload}></input>
                 </div>
                 <div className="form-group">
                     <label>Name : </label>
@@ -258,7 +334,14 @@ class FormContainer extends React.Component{
                     handleChange={this.handleVersion}
                 />
                 <hr/>
-                <div>
+                <div style={selectAllCBStyle}>
+                    <CheckBox
+                        handleCheckbox={this.selectAll}
+                        checked={this.state.selectedAll}
+                        title={"Select All"}
+                    />
+                </div>
+                <br/>
                 {this.state.profileInfo.map((profile,i)=>{
                     if(profile.type==="select"){
                         return(
@@ -272,6 +355,7 @@ class FormContainer extends React.Component{
                                         checked={profile.checked}
                                         title={profile.variableName}
                                         reminder={profile.stringToDisplay}
+                                        isEdited={profile.isEdited}
                                     />
                                     <Select
                                         id={i}
@@ -297,6 +381,7 @@ class FormContainer extends React.Component{
                                         checked={profile.checked}
                                         title={profile.variableName}
                                         reminder={profile.stringToDisplay}
+                                        isEdited={profile.isEdited}
                                 />
                                 <Input
                                     id={i}
@@ -313,7 +398,6 @@ class FormContainer extends React.Component{
                     
                 }
                 )}
-                </div>
                 <Button 
                     type = {"submit"}
                     name={"btn btn-primary"}

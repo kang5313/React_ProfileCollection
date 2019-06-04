@@ -28,3 +28,15 @@ label[for=reminder]{
 .form-group{
     padding:3px;
 }
+
+.fa-times-circle{
+    color:red;
+}
+
+.fa-check-circle{
+    color:limegreen;
+}
+
+.fa-exclamation-circle{
+    color:orange;
+}

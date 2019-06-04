@@ -1,6 +1,6 @@
 const profileInfo=[
     {
-        "id":0,
+        "id":1,
         "variableName":"TestFacilityName",
         "type":"text",
         "category":"Settings",
@@ -9,7 +9,7 @@ const profileInfo=[
         "stringToDisplay" : "",
         "checked":false,
         "value":"",
-        "placeholder":"<Enter Customer Facility Name>"
+        "placeholder":"<Enter Customer Facility Name>",
     },//1
     {   
         "id":2,
