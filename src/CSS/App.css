@@ -29,8 +29,8 @@ label[for=reminder]{
     padding:3px;
 }
 
-.fa-times-circle{
-    color:red;
+.fa-circle{
+    color:lightgray;
 }
 
 .fa-check-circle{
@@ -39,4 +39,12 @@ label[for=reminder]{
 
 .fa-exclamation-circle{
     color:orange;
+}
+
+.fa-question-circle{
+    color:red;
+}
+
+#resetBtn{
+    margin:2em;
 }

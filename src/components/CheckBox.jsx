@@ -16,7 +16,13 @@ const CheckBox = props =>{
             />
             <label htmlFor={props.name}>{props.title}</label>
             <label htmlFor="reminder">{props.reminder}</label>
-            <label style={style}> <i className={props.checked&&!props.isEdited?"fas fa-check-circle":(props.checked&&props.isEdited?"fas fa-exclamation-circle":"fas fa-times-circle")}></i> </label>
+            <label style={style}>
+                 <i className={props.value!==""&&!props.isEdited&&props.checked?"fas fa-check-circle":
+                (props.value===""&&props.checked?"fas fa-question-circle":
+                (props.isEdited&&props.checked?"fas fa-exclamation-circle":
+                (!props.checked?"fas fa-circle":"")))}>
+                 </i> 
+            </label>
         </div>
     )
 }

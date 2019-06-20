@@ -8,7 +8,7 @@ const profileInfo=[
         "endAvailableVersion":"9999.9999.9999.9999",
         "stringToDisplay" : "",
         "checked":false,
-        "value":"",
+        "selectedValue":"",
         "placeholder":"<Enter Customer Facility Name>",
     },//1
     {   
@@ -201,7 +201,8 @@ const profileInfo=[
         "endAvailableVersion":"9999.9999.9999.9999",
         "stringToDisplay" : "",
         "checked":false,
-        "value":"techFlow3/bin/lib/vslib"
+        "selectedValue":"techFlow3/bin/lib/vslib",
+        "defaultValue":"techFlow3/bin/lib/vslib"
     },//17
     {
         "id":18,
@@ -224,7 +225,8 @@ const profileInfo=[
         "endAvailableVersion":"9999.9999.9999.9999",
         "stringToDisplay" : "",
         "checked":false,
-        "value":"Default"
+        "selectedValue":"Default",
+        "defaultValue":"Default"
     },//19
     {
         "id":20,
@@ -235,7 +237,8 @@ const profileInfo=[
         "endAvailableVersion":"9999.9999.9999.9999",
         "stringToDisplay" : "",
         "checked":false,
-        "value":"Default"
+        "selectedValue":"Default",
+        "defaultValue":"Default"
     },//20
     {
         "id":21,
