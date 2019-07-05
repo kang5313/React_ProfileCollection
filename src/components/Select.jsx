@@ -5,12 +5,14 @@ const Select = props=>{
         <div className="form-group">
             <select
                 id={props.id}
+                type={props.isMultiple?"select-multiple":"select-one"}
                 name={props.name}
                 value={props.value}
                 onChange={props.handleChange}
                 className="form-control"
                 disabled={props.disabled}
                 required={true}
+                multiple={props.isMultiple}
             >
                 <option value="" disabled>
                     {props.placeholder}

@@ -21,7 +21,7 @@ const profileInfo=[
         "endAvailableVersion":"9999.9999.9999.9999",
         "stringToDisplay" : "",
         "checked":false,
-        "selectedValue":""
+        "selectedValue":[]
     },//2
     {
         "id":3,
@@ -33,7 +33,7 @@ const profileInfo=[
         "endAvailableVersion":"9999.9999.9999.9999",
         "stringToDisplay" : "",
         "checked":false,
-        "selectedValue":""
+        "selectedValue":[]
     },//3
     {
         "id":4,
@@ -201,8 +201,8 @@ const profileInfo=[
         "endAvailableVersion":"9999.9999.9999.9999",
         "stringToDisplay" : "",
         "checked":false,
-        "selectedValue":"techFlow3/bin/lib/vslib",
-        "defaultValue":"techFlow3/bin/lib/vslib"
+        "selectedValue":"..\\..\\bin\\lib\\vslib",
+        "defaultValue":"..\\..\\bin\\lib\\vslib"
     },//17
     {
         "id":18,
@@ -281,7 +281,7 @@ const profileInfo=[
         "variableName":"VisualStudio.GeneratePlateform.CppNF4",
         "type":"select",
         "category":"Settings",
-        "supportedValue":["x86","x64","x86,x64"],
+        "supportedValue":["x86","x64"],
         "startAvailableVersion":"3.10.0.84",
         "endAvailableVersion":"9999.9999.9999.9999",
         "stringToDisplay" : "",
@@ -470,7 +470,7 @@ const profileInfo=[
     },//39
     {
         "id":40,
-        "variableName":"techFlow.DefaultDebugGlobalVeriableValue.IfParentNotFound",
+        "variableName":"techFlow.DefaultDebugGlobalVariableValue.IfParentNotFound",
         "type":"select",
         "category":"Settings",
         "supportedValue":["0","1"],
@@ -574,7 +574,7 @@ const profileInfo=[
         "endAvailableVersion":"9999.9999.9999.9999",
         "stringToDisplay" : "",
         "checked":false,
-        "selectedValue":""
+        "selectedValue":[]
     },//48
 ]
 

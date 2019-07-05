@@ -6,164 +6,8 @@ import CheckBox from "../components/CheckBox"
 import SubmitButton from "../components/SubmitButton"
 import Button from "../components/Button"
 import update from "immutability-helper"
-
-/*  A function to change all the profileInfo status to unchecked (used when importXMLfile)    */
-function changeAllCheckedBoolean (loadedProfile){
-    let changedProfile = [] 
-    loadedProfile.forEach(profile=>{
-        profile.checked = false
-        changedProfile.push(profile)
-    })
-    return changedProfile
-}
-
-/*  This function handles the comparison of versions to determine whether the profile should be supported in this version or not
-    v1 as selected version , v2 as start supporting version , v3 as end supporting version
- */
- function compareVersion(v1, v2, v3) {
-    if (typeof v1 !== 'string') return false;
-    if (typeof v2 !== 'string') return false;
-    if (typeof v3 !== 'string') return false;
-    v1 = v1.split('.');
-    v2 = v2.split('.');
-    v3 = v3.split('.');
-    const k = Math.min(v1.length, v2.length, v3.length);
-    for (let i = 0; i < k; ++ i) {
-        v1[i] = parseInt(v1[i], 10);
-        v2[i] = parseInt(v2[i], 10);
-        v3[i] = parseInt(v3[i], 10);
-        if (v1[i] > v2[i] && v1[i]<v3[i]) return 1  //if the selected version is between the start and end supporting version then it's available
-        if (v1[i] < v2[i] || v1[i]>v3[i]) return -1      //else it's not available
-    }
-     /* After the for loop is over, 
-     if v1's length is same with v2's length then both of them are exactly the same,
-     else, v2 is a child version of v1.*/
-    return v1.length === v2.length ? 0: 2
-}
-
-//Use the profile variable name to load the corresponding profile into object. Return the object and insert into state
-function loadProfileVariableFromFile(data,value,fileType){
-    let profileOptions = []
-    let i = 0
-    
-    if(fileType === "tprof")
-    {
-        changeAllCheckedBoolean(profileInfoCollection).forEach(profile=>{
-            if(compareVersion(value,profile.startAvailableVersion,profile.endAvailableVersion)>=0){    //the profile is available for this version
-                if(profile.variableName === data[i])
-                {
-                    profile.checked = true
-                    i++
-                }
-                if(compareVersion(value,profile.startAvailableVersion,profile.endAvailableVersion)===2)  // the profile is only available from the mentioned child version of this version 
-                {profile.stringToDisplay = "support from "+profile.startAvailableVersion+" onwards."}
-
-                else
-                {profile.stringToDisplay = ""}
-
-                profileOptions.push(profile)
-            }
-        })
-        return profileOptions
-    }
-    else if (fileType === "tsv")
-    {
-        changeAllCheckedBoolean(profileInfoCollection).forEach(profile=>{
-            if(compareVersion(value,profile.startAvailableVersion,profile.endAvailableVersion)>=0)
-            {
-                if(compareVersion(value,profile.startAvailableVersion,profile.endAvailableVersion)===2)  // the profile is only available from the mentioned child version of this version 
-                {profile.stringToDisplay = "support from "+profile.startAvailableVersion+" onwards."}
-
-                else
-                {profile.stringToDisplay = ""}
-                profile.checked = true
-                profileOptions.push(profile)
-            }
-        })
-        return profileOptions
-    }
-}
-
-/*This function is used to parse the .tprof file in the frontend.
-  A FileReader is used to read the .tprof file. The "name" and "selectedTechFlowVersion" attribute in "profile" tag , value in "variable" tag are 
-  selected and store in a Javascript object(importedData). Promise is used in this function to ensure the data are completely loaded from the XML before "importedData" is returned.
-*/
-async function readTPROF(event){
-    return new Promise((resolve,reject)=>{
-        let parser = new DOMParser()
-        var file = event.target.files
-        var reader = new FileReader();
-        reader.onload =() =>
-            {
-                let importedXMLData = []
-                let textResult = reader.result
-                let XMLResult = parser.parseFromString(textResult,"text/xml")
-                let techflowVersion = XMLResult.getElementsByTagName("profile")[0].getAttribute("selectedTechFlowVersion")
-                let profileName = XMLResult.getElementsByTagName("profile")[0].getAttribute("name")
-                let importedXMLProfile = XMLResult.getElementsByTagName("variable")
-                let importedValue = XMLResult.getElementsByTagName("value")
-                for(var i=0;i<importedValue.length;i++){
-                    importedXMLData.push({
-                        "name":importedXMLProfile[i].getAttribute("name"),
-                        "variableValue":importedValue[i].childNodes[0].nodeValue
-                    })
-                }
-                let importedData = {
-                    "value":importedXMLData,
-                    "selectedTechFlowVersion":techflowVersion,
-                    "profileName":profileName,
-                    "fileImported":file[0].name
-                }
-                resolve(importedData)
-            }
-        if(file.length!==0) {reader.readAsText(file[0]); reader.onerror = reject}
-    })
-}
-
-async function readTSV(event){
-    return new Promise((resolve,reject)=>
-    {
-        let tsvProfileInfo = []
-        let file = event.target.files
-        let reader = new FileReader()
-        reader.onload = () =>
-        {
-            let textResult = reader.result
-            const lines = textResult.split('\n')
-            const profileVariableName = (lines.slice(0,1)[0].split('\t')[1])
-            const techFlowVersion = (lines.slice(1,2)[0].split('\t')[1])
-            lines.slice(2,lines.length).forEach(line=>{
-                let lineData = {"name":line.split('\t')[0],"variableValue":line.split('\t')[1]}
-                tsvProfileInfo.push(lineData)
-            })
-            const tsvData = {
-                "value":tsvProfileInfo,
-                "profileName":profileVariableName,
-                "selectedTechFlowVersion":techFlowVersion,
-                "fileImported":file[0].name
-            }
-            document.getElementById("xmlFileToUpload").value=""
-            resolve(tsvData)
-        }
-        if(file.length!==0) {reader.readAsText(file[0]); reader.onerror = reject}
-    })
-}
-
-/*this function takes backend port as url parameter and the FETCH data info as data parameter.
-  It return the backend generate profile xml filename after the data is fetched and processeed at backend.
-*/
-async function fetchDataToBackend(url,data){
-    try
-        {
-            let response = await fetch(url,data)
-            let responseData = await response.text()
-            return responseData
-        }
-    catch(error)
-        {
-            window.alert(error)
-        }
-}
+import * as multi from "../components/multiSelectedValue"
+import * as helper from "../components/helperFunctions.js"
 
 class FormContainer extends React.Component{
     constructor(props){
@@ -186,8 +30,10 @@ class FormContainer extends React.Component{
         let value = event.target.value
         let name = event.target.name
         let profileOptions = []
+
+        //the profile is available for this version
         profileInfoCollection
-        .filter(profile=>compareVersion(value,profile.startAvailableVersion,profile.endAvailableVersion)>=0)  //the profile is available for this version
+        .filter(profile=>helper.compareVersion(value,profile.startAvailableVersion,profile.endAvailableVersion)>=0)
         .forEach(profile=>
         {
             if(this.state.fileImported!=="")
@@ -204,7 +50,8 @@ class FormContainer extends React.Component{
                 profile.checked =true
             }
             
-            if(compareVersion(value,profile.startAvailableVersion,profile.endAvailableVersion)===2)  // the profile is only available from the mentioned child version of this version 
+            // the profile is only available from the mentioned child version of this version
+            if(helper.compareVersion(value,profile.startAvailableVersion,profile.endAvailableVersion)===2) 
             {
                 profile.stringToDisplay = "support from "+profile.startAvailableVersion+" onwards."
             }
@@ -234,6 +81,10 @@ class FormContainer extends React.Component{
         {
             profileData = update(this.state.profileInfo,{[id]:{checked:{$set:checked}}})
         }
+        else if (type === "select-multiple")
+        {
+            profileData = this.state.profileInfo[id].selectedValue.includes(value)?update(this.state.profileInfo,{[id]:{selectedValue:{$splice:[[this.state.profileInfo[id].selectedValue.indexOf(value),1]]},isEdited:{$set:true}}}):update(this.state.profileInfo,{[id]:{selectedValue:{$push:[value]},isEdited:{$set:true}}})
+        }
         this.setState({
                 profileInfo:profileData
             }
@@ -258,7 +109,7 @@ class FormContainer extends React.Component{
             mode:'cors',
             headers: new Headers()
         }
-        fetchDataToBackend(url,fetchData)
+        helper.fetchDataToBackend(url,fetchData)
         .then(filename=>{
             window.open(url+"/xml/"+filename)
         })
@@ -272,34 +123,44 @@ class FormContainer extends React.Component{
         })
     }
 
-
-    /*  User imports xml file. Based the techflow version in xml file import the relevant profile into the form.
+    /*  User imports tprof file. Based the techflow version in tprof file import the relevant profile into the form.
         Should be updated to import profile according to the profile name in the xml
     */
     importTPROFFile = (event) => {
         let profileOptionsFromFile = []
         let i = 0
+        let profileValue
         let temp_list = {}
         let profileVariableName = []
         let fileName = event.target.value
         let allowed_extensions = new Array("tprof");
-        let file_extension = fileName.split('.').pop().toLowerCase(); // split function will split the filename by dot(.), and pop function will pop the last element from the array which will give you the extension as well. If there will be no extension then it will return the filename.
 
-            if(allowed_extensions[i]===file_extension)
+        /* split function will split the filename by dot(.), and pop function will pop the last element from the array which will give you the extension as well. 
+        If there will be no extension then it will return the filename.*/
+        let file_extension = fileName.split('.').pop().toLowerCase();
+
+            if(allowed_extensions[i] === file_extension)
             {
-                readTPROF(event)
-                .then(importedData=>{
+                helper.readTPROF(event)
+                .then(importedData => {
                     importedData["value"].forEach(profile=>{
                         profileVariableName.push(profile["name"])
                     })
-                    profileOptionsFromFile=loadProfileVariableFromFile(profileVariableName,importedData["selectedTechFlowVersion"],allowed_extensions[i])
-                    profileOptionsFromFile.filter(profile=>profile.checked === true).forEach(profile=>{
-                        profile.selectedValue = importedData["value"][i]["variableValue"]
+                    profileOptionsFromFile = helper.loadProfileVariableFromFile(profileVariableName,importedData["selectedTechFlowVersion"],allowed_extensions[i])
+                    profileOptionsFromFile.filter(profile => profile.checked === true).forEach(profile => {
+                        if(multi.multiSelectedProfile.includes(profile.variableName)){
+                            profileValue = (importedData["value"][i]["variableValue"]).split(",")
+                            console.log(profile)
+                        }
+                        else{
+                            profileValue = importedData["value"][i]["variableValue"]
+                        }
+                        profile.selectedValue = profileValue
                         profile.isEdited = false
                         i++
                     })                    
-                    temp_list = JSON.parse(JSON.stringify(profileOptionsFromFile))
-                    document.getElementById("tsvFileToUpload").value=""
+                    temp_list = JSON.parse(JSON.stringify(profileOptionsFromFile))  //for backup data
+                    document.getElementById("tsvFileToUpload").value = ""
                     this.setState({
                         selectedVersion:importedData["selectedTechFlowVersion"],
                         profileName:importedData["profileName"],
@@ -325,13 +186,17 @@ class FormContainer extends React.Component{
     /*  Import data from the uploaded TSV file and populate into the form
         After the data is loaded from the TSV file, there are few conditions for handling the loaded data.
 
-        First , If the profile info input type is SELECT and (&&) the loaded profile value is appropriate (found in the supported value array)
-         or (||) the input type is text, then the position of current profile in the profile array is checked.
-        
-        If the current profile is the last element in the array , then the profile selectedValue will be set to the loaded profile value,
-        Else , check if the next profile name is in the format of ("current profile name".IfParentNotFound) then the current profile selectedValue will be set to Inherit and the next profile selectedValue will be set to the loaded value.
+        First , If the profile info input type is SELECT and (&&) the loaded profile value is appropriate (found in the supported value array) or (||) the imported profile is multiple
+         or (||) the input type is text -----(1), then the position of current profile in the profile array is checked.----(2)
 
-        If the loaded profile value is found to be inappropriate (not found in the supported value array),
+            If the imported profile is with multieple selection , then check whether it's a paired profileInfo(with .IfParentNotFound)
+                If the imported selectedValueis supported then set the value , else left it blank - (5)
+            Else repeat (5)
+        
+            If the current profile is the last element in the array , then the profile selectedValue will be set to the loaded profile value,
+            Else , check if the next profile name is in the format of ("current profile name".IfParentNotFound) then the current profile selectedValue will be set to Inherit and the next profile selectedValue will be set to the loaded value.---(3)
+
+        Else (for (1) condition ), the loaded profile value is found to be inappropriate (not found in the supported value array),
         then the current profile and next profile(under the condition if next profile name is in the format mentioned above) is set to empty ("")
 
         After populate, a set of deep copied backup and the techFlow version backup are saved to perform the reset function
@@ -343,43 +208,71 @@ class FormContainer extends React.Component{
         var file_extension = fileName.split('.').pop().toLowerCase()
         let temp_list = []
         let profileOptionsFromFile = []
+        let valueIndex  = 0
 
         if(allowed_extensions[i]===file_extension){
-            readTSV(event)
+            helper.readTSV(event)
             .then(importedData =>{
-                profileOptionsFromFile = loadProfileVariableFromFile("",importedData["selectedTechFlowVersion"],allowed_extensions[i])
-                for(let variableNameIndex=0,valueIndex=0;variableNameIndex<profileOptionsFromFile.length;variableNameIndex++,valueIndex++){
-                    if(((profileOptionsFromFile[variableNameIndex].type==="select")&&((profileOptionsFromFile[variableNameIndex].supportedValue).includes(importedData["value"][valueIndex]["variableValue"].trim())))
-                    ||profileOptionsFromFile[variableNameIndex].type==="text")
-                    {
-                        profileOptionsFromFile[variableNameIndex].selectedValue = importedData["value"][valueIndex]["variableValue"].trim()
-                        profileOptionsFromFile[variableNameIndex].isEdited = false
-                        if(variableNameIndex!==profileOptionsFromFile.length-1)
-                        {
-                            if((profileOptionsFromFile[variableNameIndex+1].variableName).includes(profileOptionsFromFile[variableNameIndex].variableName))
-                            {
-                                profileOptionsFromFile[variableNameIndex].selectedValue = "Inherit"
-                                profileOptionsFromFile[variableNameIndex+1].selectedValue = importedData["value"][valueIndex]["variableValue"].trim()
-                                variableNameIndex++
-                                profileOptionsFromFile[variableNameIndex].isEdited = false
-                                profileOptionsFromFile[variableNameIndex+1].isEdited = false
+                profileOptionsFromFile = helper.loadProfileVariableFromFile("",importedData["selectedTechFlowVersion"],allowed_extensions[i])
+                let profileSequence = importedData["profileSequence"]
+                console.log(profileOptionsFromFile)
+                profileSequence.forEach(profileIndex=>{
+                    
+                    if(((profileOptionsFromFile[profileIndex].type==="select")
+                        &&((profileOptionsFromFile[profileIndex].supportedValue).includes(importedData["value"][valueIndex]["variableValue"])||importedData["value"][valueIndex]["isMultiSelected"]))
+                        ||(profileOptionsFromFile[profileIndex].type==="text"&&profileOptionsFromFile[profileIndex].selectedValue!==""))
+                    {    
+                        if(importedData["value"][valueIndex]["isMultiSelected"]){
+                            if((importedData["value"][valueIndex]["isPairedMulti"])){
+                                if((importedData["value"][valueIndex]["variableValue"]).every(value=>(profileOptionsFromFile[profileIndex+1].supportedValue).includes(value))){
+                                    profileOptionsFromFile[profileIndex].selectedValue = ["Inherit"]
+                                    profileOptionsFromFile[profileIndex+1].selectedValue = importedData["value"][valueIndex]["variableValue"]
+                                    profileOptionsFromFile[profileIndex].isEdited = false
+                                    profileOptionsFromFile[profileIndex+1].isEdited = false
+                                    valueIndex++
+                                    return
+                                }
+
+                                profileOptionsFromFile[profileIndex].selectedValue = ""
+                                profileOptionsFromFile[profileIndex+1].selectedValue = ""
+                                profileOptionsFromFile[profileIndex].selectedValue = false
+                                profileOptionsFromFile[profileIndex+1].selectedValue.checked = false
+                                valueIndex++
+                                return
+                            }
+                            if((importedData["value"][valueIndex]["variableValue"]).every(value=>(profileOptionsFromFile[profileIndex].supportedValue).includes(value))){
+                                profileOptionsFromFile[profileIndex].selectedValue = importedData["value"][valueIndex]["variableValue"]
+                                valueIndex++
+                                return
+                            }
+                            else{
+                                profileOptionsFromFile[profileIndex].selectedValue = ""
+                                valueIndex++
+                                return
                             }
                         }
-                    }
-                    else
-                    {
-                        profileOptionsFromFile[variableNameIndex].selectedValue = ""
-                        if(variableNameIndex!==profileOptionsFromFile.length-1)
-                        {
-                            if((profileOptionsFromFile[variableNameIndex+1].variableName).includes(profileOptionsFromFile[variableNameIndex].variableName))
-                            {
-                                profileOptionsFromFile[variableNameIndex+1].selectedValue = ""
-                                variableNameIndex++
-                            }
+                        profileOptionsFromFile[profileIndex].selectedValue = importedData["value"][valueIndex]["variableValue"]
+                        profileOptionsFromFile[profileIndex].isEdited = false
+                        if(profileIndex!==profileOptionsFromFile.length-1&&(profileOptionsFromFile[profileIndex+1].variableName)===(profileOptionsFromFile[profileIndex].variableName).concat(".IfParentNotFound")){
+                                profileOptionsFromFile[profileIndex].selectedValue = "Inherit"
+                                profileOptionsFromFile[profileIndex+1].selectedValue = importedData["value"][valueIndex]["variableValue"]
+                                profileOptionsFromFile[profileIndex].isEdited = false
+                                profileOptionsFromFile[profileIndex+1].isEdited = false
                         }
                     }
-                }
-                temp_list = JSON.parse(JSON.stringify(profileOptionsFromFile))
+                    else{
+                        profileOptionsFromFile[profileIndex].selectedValue = ""
+                        profileOptionsFromFile[profileIndex].checked = false
+                        if(profileIndex!==profileOptionsFromFile.length-1
+                            &&(profileOptionsFromFile[profileIndex+1].variableName)===(profileOptionsFromFile[profileIndex].variableName).concat(".IfParentNotFound"))
+                        {
+                            profileOptionsFromFile[profileIndex+1].selectedValue = ""
+                            profileOptionsFromFile[profileIndex+1].checked = false
+                        }
+                    }
+                    valueIndex++
+                })
+                temp_list = JSON.parse(JSON.stringify(profileOptionsFromFile)) //temp_list as a backup data for RESET function
                 document.getElementById("xmlFileToUpload").value=""
                 this.setState({
                     selectedVersion:importedData["selectedTechFlowVersion"].trim(),
@@ -388,8 +281,8 @@ class FormContainer extends React.Component{
                     fileImported:importedData["fileImported"],
                     backupData:temp_list,
                     backupImportedVersion:importedData["selectedTechFlowVersion"].trim()
-                })}
-            )
+                })
+            })
         }
         /* Error handling for the inappropriate file type*/
         else{
@@ -405,7 +298,6 @@ class FormContainer extends React.Component{
         }
     }
 
-
     handleProfileName = (event) =>{
         const {value,name} = event.target
         this.setState({
@@ -418,14 +310,10 @@ class FormContainer extends React.Component{
         let checked = event.target.checked
         let profileData = []
         this.state.profileInfo.forEach(profile=>{
-            let newProfile = update(profile,{checked:{$set:checked}})
-            profileData.push(newProfile)
+                let newProfile = update(profile,{checked:{$set:checked}})  
+                profileData.push(newProfile)
         })
-        /*profileData.forEach(profile=>{
-            profile.checked = checked
-        })*/
         checked = !checked
-
         this.setState({
             profileInfo:profileData,
             selectedAll:checked
@@ -492,6 +380,7 @@ class FormContainer extends React.Component{
                 <hr/>
                 <div style={selectAllCBStyle}>
                     <Button
+                        id={"selectAllBtn"}
                         name={"btn btn-primary"}
                         title={this.state.selectedAll?"Select All":"Deselect All"}
                         handleSelectAll={this.selectAll}
@@ -530,6 +419,7 @@ class FormContainer extends React.Component{
                                         placeholder={"Select Value"}
                                         handleChange={this.handleInput}
                                         disabled={!profile.checked}
+                                        isMultiple={(multi.multiSelectedProfile.includes(profile.variableName))?true:false}
                                         />
                                 </div>
                             </div>

@@ -48,3 +48,7 @@ label[for=reminder]{
 #resetBtn{
     margin:2em;
 }
+
+#selectAllBtn{
+    width:80;
+}
