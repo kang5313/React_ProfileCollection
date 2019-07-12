@@ -9,6 +9,26 @@ import update from "immutability-helper"
 import * as multi from "../components/multiSelectedValue"
 import * as helper from "../components/helperFunctions.js"
 
+async function input (profileInfo,event){
+    const {id,value,type,checked} = event.target
+        let profileData = []
+        if (type === "select-one" || type === "text")  
+        {
+            profileData = await update(profileInfo,{[id]:{selectedValue:{$set:value},isEdited:{$set:true}}})
+        }
+        else if(type === "checkbox")
+        {
+            profileData = await update(profileInfo,{[id]:{checked:{$set:checked}}})
+        }
+        else if (type === "select-multiple")
+        {
+            profileData = profileInfo[id].selectedValue.includes(value)?
+                          await update(profileInfo,{[id]:{selectedValue:{$splice:[[profileInfo[id].selectedValue.indexOf(value),1]]},isEdited:{$set:true}}}):
+                          await update(profileInfo,{[id]:{selectedValue:{$push:[value]},isEdited:{$set:true}}})
+        }
+        return profileData
+}
+
 class FormContainer extends React.Component{
     constructor(props){
         super(props)
@@ -59,6 +79,7 @@ class FormContainer extends React.Component{
             {
                 profile.stringToDisplay = ""
             }
+            profile.isMultiSelected = (multi.multiSelectedProfile.includes(profile.variableName))?true:false
             profileOptions.push(profile)
         })
 
@@ -71,23 +92,11 @@ class FormContainer extends React.Component{
     
     //This function handles user input and change the corresponding data in profileInfoCollection according to the input type.
     handleInput = (event) =>{
-        const {id,value,type,checked} = event.target
-        let profileData = []
-        if (type === "select-one" || type === "text")  
-        {
-            profileData = update(this.state.profileInfo,{[id]:{selectedValue:{$set:value},isEdited:{$set:true}}})
-        }
-        else if(type === "checkbox")
-        {
-            profileData = update(this.state.profileInfo,{[id]:{checked:{$set:checked}}})
-        }
-        else if (type === "select-multiple")
-        {
-            profileData = this.state.profileInfo[id].selectedValue.includes(value)?update(this.state.profileInfo,{[id]:{selectedValue:{$splice:[[this.state.profileInfo[id].selectedValue.indexOf(value),1]]},isEdited:{$set:true}}}):update(this.state.profileInfo,{[id]:{selectedValue:{$push:[value]},isEdited:{$set:true}}})
-        }
-        this.setState({
+        input(this.state.profileInfo,event)
+        .then(profileData =>{
+            this.setState({
                 profileInfo:profileData
-            }
+            })}
         )
     }
 
@@ -150,7 +159,6 @@ class FormContainer extends React.Component{
                     profileOptionsFromFile.filter(profile => profile.checked === true).forEach(profile => {
                         if(multi.multiSelectedProfile.includes(profile.variableName)){
                             profileValue = (importedData["value"][i]["variableValue"]).split(",")
-                            console.log(profile)
                         }
                         else{
                             profileValue = importedData["value"][i]["variableValue"]
@@ -215,7 +223,6 @@ class FormContainer extends React.Component{
             .then(importedData =>{
                 profileOptionsFromFile = helper.loadProfileVariableFromFile("",importedData["selectedTechFlowVersion"],allowed_extensions[i])
                 let profileSequence = importedData["profileSequence"]
-                console.log(profileOptionsFromFile)
                 profileSequence.forEach(profileIndex=>{
                     
                     if(((profileOptionsFromFile[profileIndex].type==="select")
@@ -223,7 +230,9 @@ class FormContainer extends React.Component{
                         ||(profileOptionsFromFile[profileIndex].type==="text"&&profileOptionsFromFile[profileIndex].selectedValue!==""))
                     {    
                         if(importedData["value"][valueIndex]["isMultiSelected"]){
+                            profileOptionsFromFile[profileIndex].isMultiSelected = true
                             if((importedData["value"][valueIndex]["isPairedMulti"])){
+                                profileOptionsFromFile[profileIndex+1].isMultiSelected = true
                                 if((importedData["value"][valueIndex]["variableValue"]).every(value=>(profileOptionsFromFile[profileIndex+1].supportedValue).includes(value))){
                                     profileOptionsFromFile[profileIndex].selectedValue = ["Inherit"]
                                     profileOptionsFromFile[profileIndex+1].selectedValue = importedData["value"][valueIndex]["variableValue"]
@@ -233,10 +242,8 @@ class FormContainer extends React.Component{
                                     return
                                 }
 
-                                profileOptionsFromFile[profileIndex].selectedValue = ""
-                                profileOptionsFromFile[profileIndex+1].selectedValue = ""
-                                profileOptionsFromFile[profileIndex].selectedValue = false
-                                profileOptionsFromFile[profileIndex+1].selectedValue.checked = false
+                                profileOptionsFromFile[profileIndex].selectedValue = []
+                                profileOptionsFromFile[profileIndex+1].selectedValue = []
                                 valueIndex++
                                 return
                             }
@@ -246,7 +253,7 @@ class FormContainer extends React.Component{
                                 return
                             }
                             else{
-                                profileOptionsFromFile[profileIndex].selectedValue = ""
+                                profileOptionsFromFile[profileIndex].selectedValue = []
                                 valueIndex++
                                 return
                             }
@@ -333,10 +340,21 @@ class FormContainer extends React.Component{
         }
         else{
             this.state.profileInfo.forEach(profile=>{
-                let newProfile = 
-                !profile.defaultValue? 
-                Object.assign({},profile,{selectedValue:""},{checked:true}):
-                Object.assign({},profile,{selectedValue:profile.defaultValue},{checked:true})
+                let newProfile
+                if(!profile.defaultValue){
+                    if(profile.isMultiSelected)
+                    {
+                        newProfile = Object.assign({},profile,{selectedValue:[]},{checked:true})
+                    } 
+                    else
+                    {
+                        newProfile = Object.assign({},profile,{selectedValue:""},{checked:true})
+                    }
+                }
+                else
+                {
+                    newProfile =Object.assign({},profile,{selectedValue:profile.defaultValue},{checked:true})
+                }
                 profileData.push(newProfile)
             })
             this.setState({
@@ -419,8 +437,8 @@ class FormContainer extends React.Component{
                                         placeholder={"Select Value"}
                                         handleChange={this.handleInput}
                                         disabled={!profile.checked}
-                                        isMultiple={(multi.multiSelectedProfile.includes(profile.variableName))?true:false}
-                                        />
+                                        isMultiple={multi.multiSelectedProfile.includes(profile.variableName)?true:false}
+                                    />
                                 </div>
                             </div>
                         )

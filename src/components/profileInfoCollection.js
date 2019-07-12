@@ -21,7 +21,7 @@ const profileInfo=[
         "endAvailableVersion":"9999.9999.9999.9999",
         "stringToDisplay" : "",
         "checked":false,
-        "selectedValue":[]
+        "selectedValue":""
     },//2
     {
         "id":3,
@@ -33,7 +33,7 @@ const profileInfo=[
         "endAvailableVersion":"9999.9999.9999.9999",
         "stringToDisplay" : "",
         "checked":false,
-        "selectedValue":[]
+        "selectedValue":""
     },//3
     {
         "id":4,
@@ -278,7 +278,7 @@ const profileInfo=[
     },//23
     {
         "id":24,
-        "variableName":"VisualStudio.GeneratePlateform.CppNF4",
+        "variableName":"VisualStudio.GeneratePlatform.CppNF4",
         "type":"select",
         "category":"Settings",
         "supportedValue":["x86","x64"],
