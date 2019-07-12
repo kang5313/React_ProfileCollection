@@ -1,4 +1,46 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# techFlow Profile Collection Web Application
+## Steps to use this tool
+### Generate new .tprof file
+1. Input the <b>name and techFlow version</b> of the profile.
+2. Select / Input the values for each profile info.
+3. Unchecked the unwanted profile info.
+4. Submit.
+<br/>
+
+
+### Generate new .tprof file based on the existing .tprof/.tsv files
+1. Import the .tprof / .tsv file.
+2. Make a change to the profile info rendered.
+3. Submit
+<br/>
+* If the value in .tsv file is not supported by the profile info pre-set supported value, then the profile info loaded into the form will be null and unchecked.
+* If the profile info name in .tsv file is not found in the pre-set profile info list, then the profile info will be ignored.
+
+## Add new profile info
+### New profile info with input type "select-one"/"text"
+1. Add the new profile info in `profileCollection.js`.
+
+### New profile info with input type "select-multiple"
+1. Add the new profile info in `profileCollection.js`. The selectedValue of the respective profile info in the `profileCollection.js` must be set to empty array `[]`.
+2. Add the new profile info variable name in the <b>multiSelectedProfile</b> in the `multiSelectedValue.js` file.
+
+### New paired profile info (with .IfParentNotFound) with input type "select-multiple"
+1. Add the both new profile info in `profileCollection.js`. The selectedValue of the respective profile info in the `profileCollection.js` must be set to empty array `[]`.
+2. Add the both new profile info variable name in the <b>multiSelectedProfile</b> array in the `multiSelectedValue.js` file.
+3. Add the `NewProfileInfo.IfParentNotFound` variable name in the <b>multiSelectedPairedProfile</b> array in the `multiSelectedValue.js` file.
+
+
+
+## Deployment Steps
+1. Use `npm run build` in this REACT project directory to build the app for production to the `build` folder.
+2. Move to the `build` folder to the same directory with the backend python `__init__.py` file.
+3. List of python packages
+- Flask 1.0 `pip install Flask`
+- Flask-Cors 3.0.8  `pip install Flask-Cors`
+- lxml 4.3.4 `pip install lxml`
+  
+4. Run `__init__.py`
+
 
 ## Available Scripts
 
@@ -66,3 +108,6 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `npm run build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
+<br/><br/><br/>This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
