@@ -30,7 +30,17 @@
 3. Add the `NewProfileInfo.IfParentNotFound` variable name in the <b>multiSelectedPairedProfile</b> array in the `multiSelectedValue.js` file.
 
 
-<br/><br/><br/>This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+## Deployment Steps
+1. Use `npm run build` in this REACT project directory to build the app for production to the `build` folder.
+2. Move to the `build` folder to the same directory with the backend python `__init__.py` file.
+3. List of python packages
+- Flask 1.0 `pip install Flask`
+- Flask-Cors 3.0.8  `pip install Flask-Cors`
+- lxml 4.3.4 `pip install lxml`
+  
+4. Run `__init__.py`
+
 
 ## Available Scripts
 
@@ -98,3 +108,6 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `npm run build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
+<br/><br/><br/>This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
